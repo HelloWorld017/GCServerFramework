@@ -1,0 +1,7 @@
+name: "GCServerFramework"
+author: Khinenw
+version: 0.0.1 alpha
+description: "An minigame framework for GameCore."
+main: gamecore\gcframework\GCServerFramework
+api: 1.12.0
+depend: [GameCoreFramework]
