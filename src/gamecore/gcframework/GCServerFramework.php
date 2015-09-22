@@ -82,6 +82,7 @@ class GCServerFramework extends PluginBase implements Framework, Listener{
 	 * @param string $gameName Name of finished game.
 	 * @param string[] $winner Name of winners of finished game.
 	 * @param string $message A message to broadcast.
+	 * @return string message
 	 */
 	public function onGameFinish($gameName, array $winner, $message = null){
 		if($message === null){
@@ -89,6 +90,17 @@ class GCServerFramework extends PluginBase implements Framework, Listener{
 		}
 
 		$gameName = strtolower($gameName);
+
+		if(!isset($this->games[$gameName])){
+			$this->games[$gameName] = [
+				"desc" => "No Description given!",
+				"reward" => 0
+			];
+
+			$conf = new Config($this->getDataFolder()."games.yml", Config::YAML);
+			$conf->setAll($this->games);
+			$conf->save();
+		}
 
 		if(!isset($this->rank[$gameName])){
 			$this->rank[$gameName] = [];
@@ -120,11 +132,12 @@ class GCServerFramework extends PluginBase implements Framework, Listener{
 	}
 
 	public function onPacketRecieve(CustomPacketReceiveEvent $event){
-		echo "Incoming Packet!\n";
+		//echo "Incoming Packet!\n";
 		if(!in_array($event->getPacket()->address, $this->ipWhitelist)){
 			$this->getLogger()->info(TextFormat::LIGHT_PURPLE."Packet from ".$event->getPacket()->address.":".$event->getPacket()->port." has been blocked!");
 			return;
 		}
+
 		$data = json_decode($event->getPacket()->data, true);
 
 		if(!isset($data["TYPE"])) return;
