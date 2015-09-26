@@ -4,15 +4,16 @@ namespace gamecore\gcframework;
 
 use gamecore\gcframework\task\RankCheckTask;
 use ifteam\CustomPacket\event\CustomPacketReceiveEvent;
+use Khinenw\XcelUpdater\UpdatePlugin;
+use Khinenw\XcelUpdater\XcelUpdater;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\Player;
-use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
-class GCServerFramework extends PluginBase implements Framework, Listener{
+class GCServerFramework extends UpdatePlugin implements Framework, Listener{
 
 	public $games, $configs, $ipWhitelist, $rank, $wholeRank;
 
@@ -22,6 +23,8 @@ class GCServerFramework extends PluginBase implements Framework, Listener{
 
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
+
+		XcelUpdater::chkUpdate($this);
 
 		$this->generateFile("config.yml");
 		$this->generateFile("games.yml");
@@ -312,4 +315,11 @@ class GCServerFramework extends PluginBase implements Framework, Listener{
 		return $this->games[$gameName]["reward"];
 	}
 
+	public function compVersion($pluginVersion, $repoVersion){
+		return $pluginVersion !== $repoVersion;
+	}
+
+	public function getPluginYamlURL(){
+		return "https://raw.githubusercontent.com/HelloWorld017/GCServerFramework/master/plugin.yml";
+	}
 }
